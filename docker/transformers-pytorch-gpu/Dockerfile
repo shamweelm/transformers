@@ -12,13 +12,20 @@ RUN git clone https://github.com/huggingface/transformers && cd transformers && 
 RUN python3 -m pip install --no-cache-dir -e ./transformers[dev-torch,testing]
 
 # If set to nothing, will install the latest version
+# `pre` means `nightly built PyTorch`
 ARG PYTORCH=''
 ARG TORCH_VISION=''
 ARG TORCH_AUDIO=''
 
 RUN [ ${#PYTORCH} -gt 0 ] && VERSION='torch=='$PYTORCH'.*' ||  VERSION='torch'; python3 -m pip install --no-cache-dir -U $VERSION --extra-index-url https://download.pytorch.org/whl/cu113
-RUN [ ${#TORCH_VISION} -gt 0 ] && VERSION='torchvision=='TORCH_VISION'.*' ||  VERSION='torchvision'; python3 -m pip install --no-cache-dir -U $VERSION --extra-index-url https://download.pytorch.org/whl/cu113
-RUN [ ${#TORCH_AUDIO} -gt 0 ] && VERSION='torchaudio=='TORCH_AUDIO'.*' ||  VERSION='torchaudio'; python3 -m pip install --no-cache-dir -U $VERSION --extra-index-url https://download.pytorch.org/whl/cu113
+
+RUN [ ${#PYTORCH} -gt 0 -a ${#PYTORCH} != "pre" ] && VERSION='torch=='$PYTORCH'.*' ||  VERSION='torch'
+RUN [ ${#TORCH_VISION} -gt 0 -a ${#TORCH_VISION} != "pre" ] && VERSION='torchvision=='$TORCH_VISION'.*' ||  VERSION='torchvision'
+RUN [ ${#TORCH_AUDIO} -gt 0 -a ${#TORCH_AUDIO} != "pre" ] && VERSION='torchaudio=='$TORCH_AUDIO'.*' ||  VERSION='torchaudio'
+
+RUN [ ${#PYTORCH} != "pre" ] && python3 -m pip install --no-cache-dir -U $VERSION || python3 -m pip install --no-cache-dir -U --pre torch --extra-index-url https://download.pytorch.org/whl/nightly/cu113
+RUN [ ${#TORCH_VISION} != "pre" ] && python3 -m pip install --no-cache-dir -U $VERSION || python3 -m pip install --no-cache-dir -U --pre torchvision --extra-index-url https://download.pytorch.org/whl/nightly/cu113
+RUN [ ${#TORCH_AUDIO} != "pre" ] && python3 -m pip install --no-cache-dir -U $VERSION || python3 -m pip install --no-cache-dir -U --pre torchaudio --extra-index-url https://download.pytorch.org/whl/nightly/cu113
 
 RUN python3 -m pip uninstall -y tensorflow flax
 
