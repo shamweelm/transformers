@@ -12,7 +12,6 @@ concurrency:
 jobs:
   nightly-torch-deepspeed-docker:
     name: "Nightly PyTorch + DeepSpeed"
-    needs: latest-docker
     runs-on: ubuntu-latest
     steps:
       -
