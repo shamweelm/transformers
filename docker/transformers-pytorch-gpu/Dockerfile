@@ -17,8 +17,6 @@ ARG PYTORCH=''
 ARG TORCH_VISION=''
 ARG TORCH_AUDIO=''
 
-RUN [ ${#PYTORCH} -gt 0 ] && VERSION='torch=='$PYTORCH'.*' ||  VERSION='torch'; python3 -m pip install --no-cache-dir -U $VERSION --extra-index-url https://download.pytorch.org/whl/cu113
-
 RUN [ ${#PYTORCH} -gt 0 -a ${#PYTORCH} != "pre" ] && VERSION='torch=='$PYTORCH'.*' ||  VERSION='torch'
 RUN [ ${#TORCH_VISION} -gt 0 -a ${#TORCH_VISION} != "pre" ] && VERSION='torchvision=='$TORCH_VISION'.*' ||  VERSION='torchvision'
 RUN [ ${#TORCH_AUDIO} -gt 0 -a ${#TORCH_AUDIO} != "pre" ] && VERSION='torchaudio=='$TORCH_AUDIO'.*' ||  VERSION='torchaudio'
